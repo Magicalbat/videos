@@ -851,7 +851,7 @@ void model_prog_compute_grads(model_program* prog) {
     for (i64 i = (i64)prog->size - 1; i >= 0; i--) {
         model_var* cur = prog->vars[i];
 
-        if ((cur->flags * MV_FLAG_REQUIRES_GRAD) == 0) {
+        if ((cur->flags & MV_FLAG_REQUIRES_GRAD) == 0) {
             continue;
         }
 
