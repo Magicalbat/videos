@@ -1,0 +1,9 @@
+# GenomL - Quantitative Biology ML Library
+# Core dependencies
+
+numpy>=1.20.0
+
+# Optional dependencies for extended functionality
+# tensorflow-datasets  # For MNIST example
+# matplotlib          # For visualization
+# scipy               # For advanced statistics
