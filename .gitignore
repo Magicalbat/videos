@@ -1,4 +1,44 @@
-**.mat
-**.exe
-**.pdb
-**.out
+# Compiled binaries
+machine-learning
+*.o
+*.a
+*.so
+*.dylib
+*.exe
+
+# Data files
+*.mat
+*.gz
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Debug logs
+.cursor/
+*.log
+
+# Temporary files
+*.tmp
+*.bak
+*.cache
