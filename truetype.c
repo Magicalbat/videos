@@ -115,11 +115,11 @@ int main(int argc, char** argv) {
     font_load_glyph(file, &font, &glyph, glyph_index);
 
     f32 scale = font_scale_for_em(file, &font, atoi(argv[2]));
-    bitmap_r8 bitmap = font_raster_glyph(&glyph, scale, 1);
+    bitmap_r8 bmap = font_raster_glyph(&glyph, scale, 1);
 
-    for (u32 y = 0; y < bitmap.height; y++) {
-        for (u32 x = 0; x < bitmap.width; x++) {
-            u8 c = " .-oaA@#"[bitmap.data[x + y * bitmap.width] >> 5];
+    for (u32 y = 0; y < bmap.height; y++) {
+        for (u32 x = 0; x < bmap.width; x++) {
+            u8 c = " .-oaA@#"[bmap.data[x + y * bmap.width] >> 5];
             printf("%c%c", c, c);
         }
         printf("\n");
@@ -160,6 +160,11 @@ void font_init(string8 file, font_info* info) {
         if (format == 12) {
             info->cmap_subtable = cmap + offset;
         }
+    }
+
+    if (info->cmap_subtable == 0) {
+        printf("Unable to find sutable cmap subtable");
+        exit(1);
     }
 
     info->loca_format = (i16)READ_BE16(file.str + info->head + 50);
@@ -304,7 +309,7 @@ void font_load_glyph(string8 file, font_info* info, font_glyph* glyph, u32 glyph
             font_point_flag f1 = 0;
             font_point_flag f2 = FONT_POINT_FLAG_ON_CURVE;
 
-            b32 bezier = true;
+            b8 bezier = true, skip = false;
 
             switch (on_curve) {
                 case 0b110:
@@ -363,19 +368,23 @@ void font_load_glyph(string8 file, font_info* info, font_glyph* glyph, u32 glyph
                     // Impossible case
                     point_offset++;
                     i--;
+
+                    skip = true;
                 } break;
             }
 
-            glyph->num_segments++;
+            if (!skip) {
+                glyph->num_segments++;
 
-            _font_glyph_append(glyph, f0, p0);
-            if (bezier) {
-                _font_glyph_append(glyph, f1, p1);
-            }
+                _font_glyph_append(glyph, f0, p0);
+                if (bezier) {
+                    _font_glyph_append(glyph, f1, p1);
+                }
 
-            if (i == num_points - 1) {
-                f2 |= FONT_POINT_FLAG_CONTOUR_END;
-                _font_glyph_append(glyph, f2, p2);
+                if (i == num_points - 1) {
+                    f2 |= FONT_POINT_FLAG_CONTOUR_END;
+                    _font_glyph_append(glyph, f2, p2);
+                }
             }
         }
     }
